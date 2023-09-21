@@ -10,7 +10,7 @@ import { db } from "../firebase";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
 
-const ChatBox = () => {
+const ChatBox = ({ selectedUser = null }) => {
   const [messages, setMessages] = useState([]);
   const scroll = useRef();
 
@@ -29,7 +29,12 @@ const ChatBox = () => {
       const sortedMessages = fetchedMessages.sort(
         (a, b) => a.createdAt - b.createdAt
       );
-      setMessages(sortedMessages);
+
+      if(selectedUser) {
+        sortedMessages.filter((msg) => msg.id === selectedUser.uid)
+      }
+
+      return setMessages(sortedMessages);
     });
     return () => unsubscribe;
   }, []);
