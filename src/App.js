@@ -11,7 +11,9 @@ import {addDoc, collection, limit, onSnapshot, orderBy, query, serverTimestamp} 
 function App() {
     const [user] = useAuthState(auth);
 
-    const [selectedUser, setSelectedUser] = useState(null)
+    const [selectedUser, setSelectedUser] = useState(null);
+
+
 
     const saveUser = async () => {
         const {uid, photoURL, displayName} = user;

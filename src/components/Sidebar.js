@@ -40,11 +40,11 @@ const Sidebar = ({setSelectedUser}) => {
         return () => unsubscribe;
 
 
-        // console.log(await getDocs(q), "q")
+
 
         // const user = auth.currentUser;
         //
-        // console.log(user, "user")
+
 
         // setUsers(user)
     }
@@ -54,7 +54,7 @@ const Sidebar = ({setSelectedUser}) => {
         getUsers()
     }, []);
 
-    console.log(users, "iuserrs")
+
 
     const renderUser = () => {
 
@@ -62,20 +62,23 @@ const Sidebar = ({setSelectedUser}) => {
 
         return users.map((user) => {
             return (
-                <div onClick={()=> handleClick(user)}><img src={user.avatar} alt="Avatar" /></div>
+                <div onClick={()=> handleClick(user)}>{user.name}</div>
             )
         })
     }
 
-
     return (
         <div className="sidebar">
-            <div className="avatar">
+
                 {renderUser()}
-            </div>
+
+            <button onClick={() => handleClick(null)}>Back to Primary Channel</button>
+
             <div className="sidebar-content">
 
                 {/* Add your chat contacts or other sidebar content here */}
+
+
             </div>
         </div>
     );
