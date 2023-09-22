@@ -24,11 +24,11 @@ function App() {
         const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
             const fetchedMessages = [];
             QuerySnapshot.forEach((doc) => {
-                fetchedMessages.push({ ...doc.data() });
+                fetchedMessages.push({...doc.data()});
             });
 
             const a = fetchedMessages.find((item) => {
-                return user.uid === item.uid
+                return user?.uid === item.uid
             })
 
             setCurrentUser(a);
@@ -41,36 +41,40 @@ function App() {
 
         async function fetchData() {
             // You can await here
-            await  getUsers()
+
+            if (user) {
+                await getUsers()
+            }
             // ...
         }
+
         fetchData();
 
 
-    }, []);
+    }, [user]);
 
     const saveUser = async () => {
-        const {uid, photoURL, displayName} = user;
+
 
         const q = query(
             collection(db, "users")
         );
 
-      onSnapshot(q, (QuerySnapshot) => {
+        onSnapshot(q, (QuerySnapshot) => {
             const fetchedMessages = [];
             QuerySnapshot.forEach((doc) => {
                 fetchedMessages.push({...doc.data()});
             });
 
             const userAlreadyExist = fetchedMessages.find((item) => {
-                return item.uid === uid;
+                return item.uid === user?.uid;
             })
 
             if (!userAlreadyExist) {
                 addDoc(collection(db, "users"), {
-                    uid: uid,
-                    avatar: photoURL,
-                    name: displayName,
+                    uid: user.uid,
+                    avatar: user.photoURL,
+                    name: user.displayName,
                     isAdmin: false
                 });
             }
@@ -79,15 +83,17 @@ function App() {
 
     const renderApp = () => {
 
-        if(!user) {
+        console.log(currentUser, "current")
+
+        if (!user) {
             return (
-                <Welcome />
+                <Welcome/>
             )
         }
-        if(currentUser?.isAdmin) {
+        if (currentUser?.isAdmin) {
             return (
                 <>
-                    <Sidebar setSelectedUser={setSelectedUser}/>
+                    <Sidebar selectedUser={selectedUser} setSelectedUser={setSelectedUser}/>
                     <ChatBox selectedUser={selectedUser}/>
                 </>
             )
@@ -96,11 +102,14 @@ function App() {
            return <PrivateMessage selectedUser={currentUser}/>
         }
 
-        return null
+        // return null
     }
 
     useEffect(() => {
-        saveUser();
+
+        if(user) {
+            saveUser();
+        }
     }, [user]);
 
     return (

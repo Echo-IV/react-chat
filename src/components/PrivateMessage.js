@@ -13,6 +13,8 @@ const PrivateMessage = ({ selectedUser }) => {
             where("uid", "!=", selectedUser.uid)
         )
 
+        /// add also the get for private message
+
         onSnapshot(privateMessage, (QuerySnapshot) => {
             const messages = []
 

@@ -12,26 +12,54 @@ import {
     doc
 } from "firebase/firestore";
 
-const SendMessage = ({scroll}) => {
+const SendMessage = ({scroll, selectedUser}) => {
 
     const [message, setMessage] = useState("");
 
     const sendMessage = async (event) => {
         event.preventDefault();
-        if (message.trim() === "") {
-            alert("Enter valid message");
-            return;
+
+        console.log(message, "messaghe")
+
+        if(message.trim() !== "") {
+            const {uid, displayName, photoURL} = auth.currentUser;
+
+
+            if(selectedUser) {
+                addDoc(collection(db,`messages/${uid}/${selectedUser.uid}`), {
+                    text: message,
+                    name: displayName,
+                    avatar: photoURL,
+                    createdAt: serverTimestamp(),
+                    uid,
+                })
+                setMessage("");
+                return scroll.current.scrollIntoView({behavior: "smooth"});
+            }
+
+
+
+
+
+
+
+
+            await addDoc(collection(db, "messages"), {
+                text: message,
+                name: displayName,
+                avatar: photoURL,
+                createdAt: serverTimestamp(),
+                uid,
+            });
+            setMessage("");
+           return scroll.current.scrollIntoView({behavior: "smooth"});
         }
-        const {uid, displayName, photoURL} = auth.currentUser;
-        await addDoc(collection(db, "messages"), {
-            text: message,
-            name: displayName,
-            avatar: photoURL,
-            createdAt: serverTimestamp(),
-            uid,
-        });
-        setMessage("");
-        scroll.current.scrollIntoView({behavior: "smooth"});
+
+        // if (message.trim() === "") {
+        //     alert("Enter valid message");
+        //     return;
+        // }
+
     };
 
     const handleClearAllMessage = async () => {

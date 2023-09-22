@@ -7,7 +7,7 @@ import {
     onSnapshot,
     limit, doc, deleteDoc,
 } from "firebase/firestore";
-import {db} from "../firebase";
+import {auth, db} from "../firebase";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
 import "../App.css"
@@ -33,9 +33,35 @@ const ChatBox = ({selectedUser}) => {
                 (a, b) => a.createdAt - b.createdAt
             );
 
+            console.log(selectedUser, "selectedUser")
+
 
             if (!!selectedUser) {
+
+                const {uid, displayName, photoURL} = auth.currentUser;
+
+                const b  = query(
+                    collection(db, `messages/${uid}/${selectedUser.uid}`)
+                );
+
+                onSnapshot(b, (item) => {
+                    const c = [];
+                    item.forEach((doc) => {
+                        c.push({...doc.data(), id: doc.id});
+                    });
+
+                    console.log(c, "ccc")
+
+                    return setMessages(c)
+                })
+
+
+
+
+
                 const a = sortedMessages.filter((msg) => msg.uid === selectedUser.uid);
+
+                console.log(a, "a")
 
 
                 return setMessages(a);
@@ -47,14 +73,17 @@ const ChatBox = ({selectedUser}) => {
     }, [selectedUser]);
 
     const handleClear = () => {
-        const message = collection(db, "messages")
+        const {uid, displayName, photoURL} = auth.currentUser;
 
-        const r = query(message, where("uid", "==", selectedUser.uid))
 
-        onSnapshot(r, (QuerySnapshot) => {
+        const message = collection(db, `messages/${uid}/${selectedUser.uid}`)
+
+       // const r = query(message, where("uid", "==", selectedUser.uid))
+
+        onSnapshot(message, (QuerySnapshot) => {
 
             QuerySnapshot.forEach((item) => {
-                const docRef = doc(db, "messages", item.id);
+                const docRef = doc(db, `messages/${uid}/${selectedUser.uid}` , item.id);
 
                return deleteDoc(docRef)
 
@@ -71,8 +100,8 @@ const ChatBox = ({selectedUser}) => {
             </div>
 
             <span ref={scroll}></span>
-            <SendMessage scroll={scroll}/>
-            {selectedUser && <button className="button" onClick={handleClear}>clear message</button>}
+            <SendMessage selectedUser={selectedUser} scroll={scroll}/>
+            {selectedUser && <button style={{position: "absolute", top: "200px"}} className="button" onClick={handleClear}>clear message</button>}
         </main>
     );
 };
