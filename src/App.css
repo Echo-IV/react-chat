@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "Chakra Petch Regular";
+  src: url('../public/fonts/ChakraPetch-Regular.ttf');
+}
+
+
 *,
 *:before,
 *:after {
@@ -21,9 +27,15 @@ input {
 .App {
   width: 100%;
   min-height: 100vh;
-  background-color: #1c2c4c;
+  background-color: #000;
   color: #4c768d;
   padding-top: 60px;
+}
+
+.text-private {
+  font-family: "Chakra Petch Regular", sans-serif;
+  color: white;
+  padding: 10px;
 }
 
 /* navbar */

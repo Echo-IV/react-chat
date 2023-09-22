@@ -1,24 +1,17 @@
 import React, {useState} from "react";
 import {auth, db} from "../firebase";
 
-
-
 import {
     addDoc,
     collection,
-    limit,
     onSnapshot,
-    orderBy,
     query,
     serverTimestamp,
     deleteDoc,
-    getFirestore, getDocs,
     doc
 } from "firebase/firestore";
 
 const SendMessage = ({scroll}) => {
-
-    const dbs = getFirestore();
 
     const [message, setMessage] = useState("");
 
@@ -42,8 +35,6 @@ const SendMessage = ({scroll}) => {
 
     const handleClearAllMessage = async () => {
 
-        // get All user message based on his id and then for loop and delete one
-
         const q = query(
             collection(db, "messages")
         );
@@ -52,24 +43,11 @@ const SendMessage = ({scroll}) => {
 
             QuerySnapshot.forEach((item) => {
 
-                console.log(item, "item all")
-
                  const docRef = doc(db, "messages", item.id)
-                //
-                //
-                //
-                deleteDoc(docRef).then(() => {
 
-                })
-
-
+                return deleteDoc(docRef)
             });
-
         });
-
-
-
-
     };
 
     return (
@@ -89,17 +67,8 @@ const SendMessage = ({scroll}) => {
             />
             <button type="submit">Send</button>
 
-
         </form>
-
             <button onClick={handleClearAllMessage}>clear all message</button>
-
-
-            {/*<button onClick={handleClearAllMessage}>Clear all messages</button>*/}
-
-
-
-
         </>
     );
 };

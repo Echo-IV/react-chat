@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '../Sidebar.css';
-import {collection, limit, orderBy, query, getDocs, onSnapshot} from "firebase/firestore";
-import {auth, db} from "../firebase"; // You'll create this CSS file
-
-
+import {collection, query, onSnapshot} from "firebase/firestore";
+import {auth, db} from "../firebase";
 
 const Sidebar = ({setSelectedUser}) => {
 
@@ -18,68 +16,39 @@ const Sidebar = ({setSelectedUser}) => {
     const getUsers = async () => {
         const q = query(
             collection(db, "users")
-            // orderBy("createdAt", "desc"),
-            // limit(50)
         );
 
         const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
             const fetchedMessages = [];
             QuerySnapshot.forEach((doc) => {
-                fetchedMessages.push({ ...doc.data() });
+                fetchedMessages.push({...doc.data()});
             });
 
-            //
             const sortedMessages = fetchedMessages.filter(
                 (item) => item.uid !== currentUser.uid
             );
 
-
-
             setUsers(sortedMessages);
         });
         return () => unsubscribe;
-
-
-
-
-        // const user = auth.currentUser;
-        //
-
-
-        // setUsers(user)
     }
 
-
     useEffect(() => {
-        getUsers()
+         getUsers()
     }, []);
 
-
-
     const renderUser = () => {
-
-
-
         return users.map((user) => {
             return (
-                <div onClick={()=> handleClick(user)}>{user.name}</div>
+                <div onClick={() => handleClick(user)}>{user.name}</div>
             )
         })
     }
 
     return (
         <div className="sidebar">
-
-                {renderUser()}
-
+            {renderUser()}
             <button onClick={() => handleClick(null)}>Back to Primary Channel</button>
-
-            <div className="sidebar-content">
-
-                {/* Add your chat contacts or other sidebar content here */}
-
-
-            </div>
         </div>
     );
 };

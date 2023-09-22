@@ -13,8 +13,6 @@ import SendMessage from "./SendMessage";
 
 const ChatBox = ({selectedUser}) => {
 
-    console.log(selectedUser, "selec")
-
     const [messages, setMessages] = useState([]);
     const scroll = useRef();
 
@@ -35,10 +33,8 @@ const ChatBox = ({selectedUser}) => {
             );
 
 
-
             if (!!selectedUser) {
                 const a = sortedMessages.filter((msg) => msg.uid === selectedUser.uid);
-
 
 
                 return setMessages(a);
@@ -50,39 +46,20 @@ const ChatBox = ({selectedUser}) => {
     }, [selectedUser]);
 
     const handleClear = () => {
-        const q = query(
-            collection(db, "messages")
-        )
+        const message = collection(db, "messages")
 
-        const a =  collection(db, "messages")
-
-        const r = query(a, where("uid", "==", selectedUser.uid))
-
-        console.log(r, "r")
+        const r = query(message, where("uid", "==", selectedUser.uid))
 
         onSnapshot(r, (QuerySnapshot) => {
 
-        //
-            console.log(QuerySnapshot, "qwerty")
-
             QuerySnapshot.forEach((item) => {
-                console.log(item.data(),"data" )
+                const docRef = doc(db, "messages", item.id);
 
-
-                 const docRef = doc(db, "messages", item.id);
-
-                 console.log(docRef, "docRef")
-
-                deleteDoc(docRef).then(() => {
-
-                })
+               return deleteDoc(docRef)
 
             })
         })
     }
-
-
-
 
     return (
         <main className="chat-box">
@@ -91,15 +68,11 @@ const ChatBox = ({selectedUser}) => {
                     <Message key={message.id} message={message}/>
                 ))}
             </div>
-            {/* when a new message enters the chat, the screen scrolls down to the scroll div */}
+
             <span ref={scroll}></span>
-
             <SendMessage scroll={scroll}/>
-
-            {selectedUser && <button onClick={handleClear}>clear message</button> }
-
+            {selectedUser && <button onClick={handleClear}>clear message</button>}
         </main>
     );
 };
-
 export default ChatBox;
