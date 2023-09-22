@@ -11,8 +11,7 @@ const PrivateMessage = ({ selectedUser }) => {
         const {uid, displayName, photoURL} = auth.currentUser;
 
         const privateMessage = query(
-            collection(db, "messages"),
-            where("uid", "!=", selectedUser.uid)
+            collection(db, "messages")
         )
 
         const g  = query(
@@ -25,6 +24,9 @@ const PrivateMessage = ({ selectedUser }) => {
 
 
             QuerySnapshot.forEach((doc) => {
+
+                console.log(doc, "aaaa")
+
                 messages.push({ ...doc.data(), id:doc.id })
             })
         })
@@ -32,6 +34,9 @@ const PrivateMessage = ({ selectedUser }) => {
         onSnapshot(privateMessage, (QuerySnapshot) => {
 
             QuerySnapshot.forEach((doc) => {
+
+                console.log(doc, "bbbb")
+
                 messages.push({ ...doc.data(), id:doc.id })
             })
 
@@ -39,6 +44,8 @@ const PrivateMessage = ({ selectedUser }) => {
         })
 
     }, []);
+
+    console.log(messages, "nmss")
 
     const renderMessages = () => {
         return messages.map((message) => {
