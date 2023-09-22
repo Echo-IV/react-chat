@@ -12,7 +12,7 @@ import PrivateMessage from "./components/PrivateMessage";
 function App() {
     const [user] = useAuthState(auth);
 
-    const [currentUser, setCurrentUser] = useState("")
+    const [currentUser, setCurrentUser] = useState(null)
 
     const [selectedUser, setSelectedUser] = useState(null);
 
@@ -37,6 +37,18 @@ function App() {
 
     }
 
+    useEffect(() => {
+
+        async function fetchData() {
+            // You can await here
+            await  getUsers()
+            // ...
+        }
+        fetchData();
+
+
+    }, []);
+
     const saveUser = async () => {
         const {uid, photoURL, displayName} = user;
 
@@ -59,6 +71,7 @@ function App() {
                     uid: uid,
                     avatar: photoURL,
                     name: displayName,
+                    isAdmin: false
                 });
             }
         });
@@ -71,7 +84,7 @@ function App() {
                 <Welcome />
             )
         }
-        if(!currentUser.isAdmin) {
+        if(currentUser?.isAdmin) {
             return (
                 <>
                     <Sidebar setSelectedUser={setSelectedUser}/>
@@ -79,14 +92,15 @@ function App() {
                 </>
             )
         }
-        return (
-            <PrivateMessage selectedUser={currentUser} />
-        )
+        if(currentUser) {
+           return <PrivateMessage selectedUser={currentUser}/>
+        }
+
+        return null
     }
 
     useEffect(() => {
         saveUser();
-        getUsers()
     }, [user]);
 
     return (

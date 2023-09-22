@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import '../Sidebar.css';
+import "../App.css"
 import {collection, query, onSnapshot} from "firebase/firestore";
 import {auth, db} from "../firebase";
 
@@ -48,7 +49,7 @@ const Sidebar = ({setSelectedUser}) => {
     return (
         <div className="sidebar">
             {renderUser()}
-            <button onClick={() => handleClick(null)}>Back to Primary Channel</button>
+            <button className="button" onClick={() => handleClick(null)}>Back to Primary Channel</button>
         </div>
     );
 };

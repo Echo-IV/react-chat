@@ -10,6 +10,7 @@ import {
 import {db} from "../firebase";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
+import "../App.css"
 
 const ChatBox = ({selectedUser}) => {
 
@@ -71,7 +72,7 @@ const ChatBox = ({selectedUser}) => {
 
             <span ref={scroll}></span>
             <SendMessage scroll={scroll}/>
-            {selectedUser && <button onClick={handleClear}>clear message</button>}
+            {selectedUser && <button className="button" onClick={handleClear}>clear message</button>}
         </main>
     );
 };

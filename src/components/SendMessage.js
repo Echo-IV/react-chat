@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {auth, db} from "../firebase";
+import "../App.css"
 
 import {
     addDoc,
@@ -57,18 +58,19 @@ const SendMessage = ({scroll}) => {
                 Enter Message
             </label>
             <input
+
                 id="messageInput"
                 name="messageInput"
                 type="text"
-                className="form-input__input"
+                className="form-input"
                 placeholder="type message..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
             />
             <button type="submit">Send</button>
+            <button className="button" onClick={handleClearAllMessage}>clear all message</button>
 
         </form>
-            <button onClick={handleClearAllMessage}>clear all message</button>
         </>
     );
 };
