@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {collection, onSnapshot, query, where} from "firebase/firestore";
-import {db} from "../firebase";
+import {auth, db} from "../firebase";
 import "../App.css"
 
 const PrivateMessage = ({ selectedUser }) => {
@@ -8,15 +8,28 @@ const PrivateMessage = ({ selectedUser }) => {
     const [messages, setMessages] = useState([])
 
     useEffect(() => {
+        const {uid, displayName, photoURL} = auth.currentUser;
+
         const privateMessage = query(
             collection(db, "messages"),
             where("uid", "!=", selectedUser.uid)
         )
 
-        /// add also the get for private message
+        const g  = query(
+            collection(db, `messages/${uid}/${selectedUser.uid}`)
+        );
+
+        const messages = []
+
+        onSnapshot(g, (QuerySnapshot) => {
+
+
+            QuerySnapshot.forEach((doc) => {
+                messages.push({ ...doc.data(), id:doc.id })
+            })
+        })
 
         onSnapshot(privateMessage, (QuerySnapshot) => {
-            const messages = []
 
             QuerySnapshot.forEach((doc) => {
                 messages.push({ ...doc.data(), id:doc.id })
