@@ -1,64 +1,53 @@
 import React, {useEffect, useState} from 'react';
 import {collection, onSnapshot, query, where} from "firebase/firestore";
-import {auth, db} from "../firebase";
+import {auth, db, getDynamicCollection } from "../firebase";
 import "../App.css"
+import * as PropTypes from "prop-types";
+import MessagePrivate from "./MessagePrivate";
+import Message from "./Message";
 
-const PrivateMessage = ({ selectedUser }) => {
+MessagePrivate.propTypes = {message: PropTypes.any};
+const PrivateMessage = ({ isDeleted }) => {
 
-    const [messages, setMessages] = useState([])
+    //TODO add context to get notify when messages are deleted
+
+    const {uid} = auth.currentUser;
+
+    const [messages, setMessages] = useState([]);
+     const dynamicCollectionId = `users/messages/${uid}`;
+
+     const privateMessageCollection = getDynamicCollection(dynamicCollectionId);
+
+     const messageCollection = query(collection(db, "messages"));
 
     useEffect(() => {
-        const {uid, displayName, photoURL} = auth.currentUser;
-
-        const privateMessage = query(
-            collection(db, "messages")
-        )
-
-        const g  = query(
-            collection(db, `messages/${uid}/${selectedUser.uid}`)
-        );
-
-        const messages = []
-
-        onSnapshot(g, (QuerySnapshot) => {
-
-
-            QuerySnapshot.forEach((doc) => {
-
-                console.log(doc, "aaaa")
-
-                messages.push({ ...doc.data(), id:doc.id })
+        const unsubscribe = onSnapshot(privateMessageCollection, (querySnapshot) => {
+            const messages = [];
+            querySnapshot.forEach((doc) => {
+                messages.push(doc.data())
             })
+            setMessages(prevData => [...prevData, ...messages]);
         })
+        return () => unsubscribe();
+    }, [uid, isDeleted]);
 
-        onSnapshot(privateMessage, (QuerySnapshot) => {
-
-            QuerySnapshot.forEach((doc) => {
-
-                console.log(doc, "bbbb")
-
-                messages.push({ ...doc.data(), id:doc.id })
+    useEffect(() => {
+        const unsubscribe = onSnapshot(messageCollection, (querySnapshot) => {
+            const messages = [];
+            querySnapshot.forEach((doc) => {
+                messages.push(doc.data())
             })
-
-            setMessages(messages)
+            setMessages(prevData => [...prevData, ...messages]);
         })
-
-    }, []);
-
-    console.log(messages, "nmss")
-
-    const renderMessages = () => {
-        return messages.map((message) => {
-            return (
-                <div className="text-private">{message.text}</div>
-            )
-        })
-    }
+        return () => unsubscribe();
+    }, [uid, isDeleted])
 
     return (
-        <>
-            {renderMessages()}
-        </>
+        <div style={{marginTop: 50}}>
+            {messages.map((message) => (
+                <MessagePrivate key={message.uid} message={message} />
+            ))}
+        </div>
     );
 };
 

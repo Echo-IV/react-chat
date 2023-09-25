@@ -15,6 +15,7 @@ function App() {
     const [currentUser, setCurrentUser] = useState(null)
 
     const [selectedUser, setSelectedUser] = useState(null);
+    const [messages, setMessages] = useState([]);
 
     const getUsers = async () => {
         const q = query(
@@ -83,7 +84,7 @@ function App() {
 
     const renderApp = () => {
 
-        console.log(currentUser, "current")
+
 
         if (!user) {
             return (
@@ -99,10 +100,8 @@ function App() {
             )
         }
         if(currentUser) {
-           return <PrivateMessage selectedUser={currentUser}/>
+           return <PrivateMessage messages={messages} selectedUser={currentUser}/>
         }
-
-        // return null
     }
 
     useEffect(() => {

@@ -19,9 +19,7 @@ const ChatBox = ({selectedUser}) => {
 
     useEffect(() => {
         const q = query(
-            collection(db, "messages"),
-            orderBy("createdAt", "desc"),
-            limit(50)
+            collection(db, "messages")
         );
 
         const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
@@ -33,38 +31,29 @@ const ChatBox = ({selectedUser}) => {
                 (a, b) => a.createdAt - b.createdAt
             );
 
-            console.log(selectedUser, "selectedUser")
 
 
-            if (!!selectedUser) {
+
+            if (selectedUser) {
 
                 const {uid, displayName, photoURL} = auth.currentUser;
 
                 const b  = query(
-                    collection(db, `messages/${uid}/${selectedUser.uid}`)
+                    collection(db, `users/messages/${selectedUser.uid}`)
                 );
 
-                onSnapshot(b, (item) => {
+                onSnapshot(b,(item) => {
                     const c = [];
                     item.forEach((doc) => {
                         c.push({...doc.data(), id: doc.id});
                     });
 
-                    console.log(c, "ccc")
+
 
                     return setMessages(c)
                 })
 
 
-
-
-
-                const a = sortedMessages.filter((msg) => msg.uid === selectedUser.uid);
-
-                console.log(a, "a")
-
-
-                return setMessages(a);
             }
 
             return setMessages(sortedMessages);
@@ -76,14 +65,16 @@ const ChatBox = ({selectedUser}) => {
         const {uid, displayName, photoURL} = auth.currentUser;
 
 
-        const message = collection(db, `messages/${uid}/${selectedUser.uid}`)
+        const message = collection(db, `users/messages/${selectedUser.uid}`)
 
        // const r = query(message, where("uid", "==", selectedUser.uid))
 
         onSnapshot(message, (QuerySnapshot) => {
 
             QuerySnapshot.forEach((item) => {
-                const docRef = doc(db, `messages/${uid}/${selectedUser.uid}` , item.id);
+                const docRef = doc(db, `users/messages/${selectedUser.uid}` , item.id);
+
+                setMessages([])
 
                return deleteDoc(docRef)
 

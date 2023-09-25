@@ -19,14 +19,14 @@ const SendMessage = ({scroll, selectedUser}) => {
     const sendMessage = async (event) => {
         event.preventDefault();
 
-        console.log(message, "messaghe")
+
 
         if(message.trim() !== "") {
             const {uid, displayName, photoURL} = auth.currentUser;
 
 
             if(selectedUser) {
-                addDoc(collection(db,`messages/${uid}/${selectedUser.uid}`), {
+                addDoc(collection(db,`users/messages/${selectedUser.uid}`), {
                     text: message,
                     name: displayName,
                     avatar: photoURL,
@@ -73,6 +73,8 @@ const SendMessage = ({scroll, selectedUser}) => {
             QuerySnapshot.forEach((item) => {
 
                  const docRef = doc(db, "messages", item.id)
+
+                setMessage([])
 
                 return deleteDoc(docRef)
             });
